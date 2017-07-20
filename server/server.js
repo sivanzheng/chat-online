@@ -132,7 +132,7 @@ app.get('/test', function (req, res) {
   console.log('以下是message对象')
   console.log(typeof(message))
   res.json({
-    res_msg: '我就试试'
+    res_msg: '我就试试啊'
   })
 })
 
