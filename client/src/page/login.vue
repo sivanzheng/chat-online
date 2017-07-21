@@ -49,7 +49,7 @@ export default{
                         } else if(data.res_code === 1){
                             this.msg = data.res_code
                             this.$store.dispatch('showDialog')
-                            this.$router.push('/')
+                            this.$router.push('/chat')
                             this.$store.dispatch('login',data.info)
                         }
                     }).catch(function (err) {

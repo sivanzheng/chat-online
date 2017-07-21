@@ -63,7 +63,7 @@
         const that = this
         // 连接websocket地址
         this.socket = io.connect('http://localhost:3001')
-        this.socket.on('message', function(obj) {
+         this.socket.on('message', function(obj) {
             /*that.$store.commit('addroomdetailinfos', obj)*/
             window.scrollTo(0, 900000)
         })

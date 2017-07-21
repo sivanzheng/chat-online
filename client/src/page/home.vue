@@ -60,7 +60,8 @@
         },*/
         methods: {
             logout() {
-              this.$http.post('/api/user/logout', {})
+                this.$store.dispatch('logout')
+                this.$http.post('/api/user/logout', {})
                     .then( (res) => {
                         let data = res.data
                         if(data.res_code === 0) {

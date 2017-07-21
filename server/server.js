@@ -139,8 +139,7 @@ app.get('/test', function (req, res) {
 //退出
 app.post('/user/logout', function (req, res) {
   req.session = null
-  res.redirect("/login")
- /* if (req.session === null) {
+  if (req.session === null) {
       res.json({
         res_code: 1
       })
@@ -149,7 +148,7 @@ app.post('/user/logout', function (req, res) {
         res_code: 0,
         res_msg: '退出失败，请重试~'
       })
-    }*/
+    }
 
 })
 
@@ -219,6 +218,8 @@ io.on('connection', function (socket) {
   })
 
   socket.on('login', function (obj) {
+    console.log('login——>obj')
+    console.log(obj)
   socket.name = obj.name
   users[obj.name] = obj
     //用于监听用户进行聊天室
@@ -226,12 +227,16 @@ io.on('connection', function (socket) {
   })
 
   socket.on('logout',function (name) {
+    console.log('logout——>name')
+    console.log(name)
     delete users[name]
     //用户监听用退出聊天室
     io.emit('logout', users)
   })
 
   socket.on('disconnect', function () {
+    console.log('disconnect——>socket')
+    console.log(socket)
     delete users[socket.name]
     //用户监听用退出聊天室
     io.emit('logout', users)
