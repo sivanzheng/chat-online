@@ -15,7 +15,7 @@
             </form>
             <router-link :to="{path:'/reg'}" tag="div">注册帐号</router-link>
         </div>
-        <mydialog :msg="msg" :status="status"></mydialog>
+        <mydialog :dialogMsg="msg" :status="status" :title="title" @fromChild="go"></mydialog>
     </div>
 </template>
 
@@ -24,6 +24,7 @@ import mydialog from '../components/dialog.vue'
 export default{
     data() {
         return {
+            title: '',
             msg: '',
             status: 0,
             loading: '',
@@ -44,12 +45,11 @@ export default{
                     .then( (res) => {
                         let data = res.data
                         if(data.res_code === 0) {
-                            this.msg = data.res_code
+                            this.msg = 'data.res_msg'
                             this.$store.dispatch('showDialog')
                         } else if(data.res_code === 1){
-                            this.msg = data.res_code
+                            this.msg = data.res_msg
                             this.$store.dispatch('showDialog')
-                            this.$router.push('/chat')
                             this.$store.dispatch('login',data.info)
                         }
                     }).catch(function (err) {
@@ -61,6 +61,11 @@ export default{
                 this.$store.dispatch('showDialog')
             }
            
+        },
+        go(data){
+            if(data){
+                this.$router.push('/chat')
+            }
         }
     },
     components:{

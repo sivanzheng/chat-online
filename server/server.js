@@ -183,8 +183,9 @@ app.get('/message',function (req, res) {
       console.log(err)
     } else{
       res.json({
-        errno: 0,
-        data: message
+        res_code: 1,
+        res_msg: '',
+        infos: message
       })
     }
   })
@@ -226,7 +227,7 @@ io.on('connection', function (socket) {
     io.emit('login', users)
   })
 
-  socket.on('logout',function (name) {
+  /*socket.on('logout',function (name) {
     console.log('logout——>name')
     console.log(name)
     delete users[name]
@@ -240,6 +241,6 @@ io.on('connection', function (socket) {
     delete users[socket.name]
     //用户监听用退出聊天室
     io.emit('logout', users)
-  })
+  })*/
 
 })

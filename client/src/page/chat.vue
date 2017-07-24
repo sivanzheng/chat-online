@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="container">
+    <div class="container" id="container">
 
       <div class="title">
         <mu-appbar title="Title">
@@ -16,32 +16,37 @@
         <div style="height:70px"></div>
         <div>在线人员</div>
         <div class="online">
-            <img src="obj.src" alt="">
+            <img src="" alt="">
         </div>
-        <div  v-for="obj in getHistory">
+        <div  v-for="obj in getHistoryInfos">
+
           <get-msg v-if="obj.username != getUser.name" 
             :name="obj.username" 
             :img="obj.src" 
             :msg="obj.msg">
           </get-msg>
 
-          <send-msg>
-             
+          <send-msg
+           v-if="obj.username == getUser.name" 
+           :name="obj.username" 
+           :img="obj.src" 
+           :msg="obj.msg">
           </send-msg>
+
         </div>
         <div>
 
         </div>
-        <div style="height:120px"></div>
+        <div style="height:9rem"></div>
       </div>
 
-      <div class="bottom">
+      <div class="bottom" ref="bottom">
         <div class="input">
-            <input type="text" id="message">
+            <input type="text" v-model="txt">
         </div>
         <mu-raised-button label="发送" class="demo-raised-button" primary @click="submit"/>
       </div>
-
+      <mydialog :dialogMsg="msg" :status="status" :title="title"></mydialog>
     </div>
   </transition>
 </template>
@@ -55,49 +60,65 @@
   export default{
     data(){
       return {
+        title: '',
+        txt:'',
+        msg:'',
+        status: 0,
         socket: ''
       }
     },
+    mounted() {
+      /*this.height = document.body.scrollHeight - 220*/
+      this.title = this.getUser.name
+      this.$store.dispatch('getHistory')
+      window.scrollTo(0, this.height)
+    },
     created() {
-        // socket内部，this指针指向问题
-        const that = this
         // 连接websocket地址
-        this.socket = io.connect('http://localhost:3001')
-         this.socket.on('message', function(obj) {
+        this.socket = io.connect('http://192.168.1.232:3001')
+        
+         this.socket.on('message', (obj) => {
+          console.log(obj)
+            this.$store.dispatch('getHistory')
             /*that.$store.commit('addroomdetailinfos', obj)*/
-            window.scrollTo(0, 900000)
-        })
-        this.socket.on('logout', function (obj) {
-            that.$store.commit('setusers', obj)
+            
         })
     },
     methods: {
-        closechat() {
+        /*closechat() {
             this.$store.commit('changechattoggle')
             this.socket.emit('logout', this.getUser.name)
-        },
+        },*/
         submit() {
             // 判断发送信息是否为空
-            if (document.getElementById('message').value !== '') {
+            if (this.txt != '') {
                 let obj = {
                     username: this.getUser.name,
-                    src: this.getusersrc,
-                    msg: document.getElementById('message').value
+                    src: this.getUser.src,
+                    msg: this.txt
                 }
                 // 传递消息信息
+                console.log('我发送消息啦')
                 this.socket.emit('message', obj)
-                document.getElementById('message').value = ''
+                this.txt = ''
+                this.$nextTick(()=>{
+                  setTimeout(function(){
+                    window.scrollTo(0, (document.getElementById('container').scrollHeight + 200))
+                  },400)
+                })
+                
+               /* window.scrollTo(0, document.body.scrollHeight + 200)*/
+                
             } else {
-                this.$store.commit('changedialog')
-                this.$store.commit('changedialoginfo', '内容不能为空')
+                this.msg = '写点啥再发送呗~'
+                this.$store.dispatch('showDialog')
             }
         }
     },
     computed: {
       ...mapGetters([
           'getUser',
-          'getrobotmsg',
-          'getHistory'
+          'getHistoryInfos'
       ])
     },
     components: {

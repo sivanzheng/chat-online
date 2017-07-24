@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import axios from 'axios'
 
 export default {
   state: {
@@ -13,14 +14,14 @@ export default {
   },
   mutations: {
     setHistoryInfos(state, data) {
-      state.getHistoryInfos.infos = data
+      state.history.infos = data
     }
   },
   actions: {
     getHistory({commit}) {
       axios.get('/api/message')
         .then(function (data) {
-          commit('setHistoryInfos', data.data.data)
+          commit('setHistoryInfos', data.data.infos)
         })
         .catch(function (err) {
           console.log(err)

@@ -13,7 +13,7 @@
             </form>
             <router-link :to="{path:'/login'}" tag="div">我已有帐号</router-link>
         </div>
-        <mydialog :msg="msg" :status="status"></mydialog>
+        <mydialog :dialogMsg="msg" :status="status"></mydialog>
     </div>
 </template>
 
