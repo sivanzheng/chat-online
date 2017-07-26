@@ -1,6 +1,6 @@
 var express = require('express')
 var config = require('../client/config/index.js')
-var port = process.env.PORT || 3001
+var port = process.env.PORT || 80
 
 var app = express()
 
@@ -18,7 +18,7 @@ var User = require('../server/models/user.js')
 
 mongoose.Promise = require('bluebird')
 
-global.db = mongoose.connect("mongodb://localhost:27017/chatRoom")
+global.db = mongoose.connect("mongodb://localhost:27017/chatRoom",{useMongoClient: true})
 //服务器数据json化
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
@@ -244,3 +244,5 @@ io.on('connection', function (socket) {
   })*/
 
 })
+
+app.use(express.static('./dist'))

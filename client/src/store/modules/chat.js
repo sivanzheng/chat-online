@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import axios from 'axios'
 
+const HOST = process.env.NODE_ENV === 'development' ? '/api' : ''
+
 export default {
   state: {
     history: {
@@ -19,7 +21,7 @@ export default {
   },
   actions: {
     getHistory({commit}) {
-      axios.get('/api/message')
+      axios.get(HOST+'/message')
         .then(function (data) {
           commit('setHistoryInfos', data.data.infos)
         })

@@ -75,7 +75,7 @@
     },
     created() {
         // 连接websocket地址
-        this.socket = io.connect('http://192.168.1.232:3001')
+        this.socket = io.connect('http://localhost:80')
         
          this.socket.on('message', (obj) => {
           console.log(obj)

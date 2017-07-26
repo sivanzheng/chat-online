@@ -41,7 +41,7 @@ export default{
                   name: name,
                   password: password
                 }
-                this.$http.post('/api/user/login', data)
+                this.$http.post(this.HOST+'/user/login', data)
                     .then( (res) => {
                         let data = res.data
                         if(data.res_code === 0) {

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import axios from 'axios'
 
+const HOST = process.env.NODE_ENV === 'development' ? '/api' : ''
+
 export default {
   state: [{
       message: '这里有一朵小蘑菇~', 
@@ -17,7 +19,7 @@ export default {
   actions: {
     robotMsg({commit}, data) {
       var robotdata = ''
-      axios.get('/api/robotapi', {
+      axios.get(HOST+'/robotapi', {
         params: data
       })
         .then(function (data) {

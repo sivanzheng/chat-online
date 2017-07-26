@@ -10,6 +10,9 @@ import MuseUI from 'muse-ui'
 import 'muse-ui/dist/muse-ui.css'
 import 'muse-ui/dist/theme-carbon.css' // 使用 carbon 主题
 Vue.prototype.$http = axios
+
+Vue.prototype.HOST = process.env.NODE_ENV === 'development' ? '/api' : ''
+
 Vue.use(MuseUI)
 Vue.config.productionTip = false
 /* eslint-disable no-new */

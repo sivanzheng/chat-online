@@ -5,9 +5,9 @@
         <div class="navbottom">
             <mu-paper>
                 <mu-bottom-nav :value="bottomNav" shift @change="handleChange">
-                    <mu-bottom-nav-item value="recents" title="聊天室" icon="question_answer" to="/chat"/>
-                    <mu-bottom-nav-item value="favorites" title="小蘑菇" icon="face" to="/robot"/>
-                    <mu-bottom-nav-item value="nearby" title="我的" icon="settings" to="/home"/>
+                    <mu-bottom-nav-item value="chat" title="聊天室" icon="question_answer" to="/chat"/>
+                    <mu-bottom-nav-item value="robot" title="小蘑菇" icon="face" to="/robot"/>
+                    <mu-bottom-nav-item value="home" title="我的" icon="settings" to="/home"/>
                 </mu-bottom-nav>
             </mu-paper>
         </div>
@@ -18,7 +18,7 @@
 export default {
   data () {
     return {
-        bottomNav: 'recents'
+        bottomNav: ''
     }
   },
   methods: {
@@ -26,7 +26,26 @@ export default {
         this.bottomNav = val
     }  
   },
-  components: {
+  mounted(){
+    let n = this.$route.path
+    switch(n)
+    {
+    case '/chat':
+        this.bottomNav = 'chat'
+        console.log(this.bottomNav)
+        break
+    case '/robot':
+        this.bottomNav = 'robot'
+        console.log(this.bottomNav)
+        break
+    case '/home':
+        this.bottomNav = 'home'
+        console.log(this.bottomNav)
+        break
+    default:
+        this.bottomNav = 'chat'
+        console.log(this.bottomNav)
+    }
   }
 }
 </script>

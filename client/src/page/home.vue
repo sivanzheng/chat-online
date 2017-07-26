@@ -61,7 +61,7 @@
         methods: {
             logout() {
                 this.$store.dispatch('logout')
-                this.$http.post('/api/user/logout', {})
+                this.$http.post(this.HOST+'/user/logout', {})
                     .then( (res) => {
                         let data = res.data
                         if(data.res_code === 0) {
@@ -75,7 +75,7 @@
                     })
             },
             test(){
-                this.$http.get('/api/test', {})
+                this.$http.get(this.HOST+'/test', {})
                     .then( (res) => {
                         console.log(res)
                     }).catch(function (err) {
