@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import index from '@/page/index'
 import home from '@/page/home'
 import login from '@/page/login'
 import reg from '@/page/reg'
@@ -12,7 +13,15 @@ const router =  new Router({
   routes: [
     { 
       path: '/', 
-      redirect: '/chat'
+      redirect: '/index'
+    },
+    {
+      path: '/index',
+      name: 'Index',
+      component: index,
+      meta: {
+        requireAuth: false
+      }
     },
     {
       path: '/home',
@@ -41,7 +50,7 @@ const router =  new Router({
             }
     },
     {
-      path: '/chat',
+      path: '/chat/:id',
       name: 'chat',
       component: chat,
       meta: {

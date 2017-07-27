@@ -5,7 +5,7 @@
         <div class="navbottom">
             <mu-paper>
                 <mu-bottom-nav :value="bottomNav" shift @change="handleChange">
-                    <mu-bottom-nav-item value="chat" title="聊天室" icon="question_answer" to="/chat"/>
+                    <mu-bottom-nav-item value="index" title="聊天室" icon="question_answer" to="/index"/>
                     <mu-bottom-nav-item value="robot" title="小蘑菇" icon="face" to="/robot"/>
                     <mu-bottom-nav-item value="home" title="我的" icon="settings" to="/home"/>
                 </mu-bottom-nav>
@@ -30,8 +30,8 @@ export default {
     let n = this.$route.path
     switch(n)
     {
-    case '/chat':
-        this.bottomNav = 'chat'
+    case '/index':
+        this.bottomNav = 'index'
         console.log(this.bottomNav)
         break
     case '/robot':

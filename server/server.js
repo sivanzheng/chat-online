@@ -1,24 +1,33 @@
 var express = require('express')
-var config = require('../client/config/index.js')
 var port = process.env.PORT || 80
-
 var app = express()
-
 var router = express.Router()
 
 app.use(router)
- 
+// 只用于开发环境
+
+if ('development' == app.get('env')) {
+  console.log( app.get('env'))
+  port = 3001
+}
+
+// 只用于生产环境
+if ('production' == app.get('env')) {
+  console.log( app.get('env'))
+  app.use(express.static('./dist'))
+}
+
 var mongoose = require('mongoose')
 var bodyParser = require('body-parser')
 var session = require('cookie-session')
 var superagent = require('superagent')
 var server = app.listen(port)
 console.log('program started on port'+ port)
+
 var User = require('../server/models/user.js')
-
 mongoose.Promise = require('bluebird')
-
 global.db = mongoose.connect("mongodb://localhost:27017/chatRoom",{useMongoClient: true})
+
 //服务器数据json化
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
@@ -244,5 +253,3 @@ io.on('connection', function (socket) {
   })*/
 
 })
-
-app.use(express.static('./dist'))

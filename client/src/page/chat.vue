@@ -68,14 +68,15 @@
       }
     },
     mounted() {
-      /*this.height = document.body.scrollHeight - 220*/
+      this.height = document.body.scrollHeight - 220
       this.title = this.getUser.name
       this.$store.dispatch('getHistory')
       window.scrollTo(0, this.height)
     },
     created() {
         // 连接websocket地址
-        this.socket = io.connect('http://localhost:80')
+        const SOCKET_HOST = process.env.NODE_ENV === 'development' ? 'localhost:3001' : 'http://113.209.100.33'
+        this.socket = io.connect(SOCKET_HOST)
         
          this.socket.on('message', (obj) => {
           console.log(obj)
