@@ -140,8 +140,9 @@ app.get('/test', function (req, res) {
   console.log(typeof(Message))
   console.log('以下是message对象')
   console.log(typeof(message))
+  findById
   res.json({
-    res_msg: '我就试试啊'
+    res_msg: Message
   })
 })
 
@@ -212,7 +213,7 @@ io.on('connection', function (socket) {
       username: obj.username,
       src: obj.src,
       msg: obj.msg,
-      roomid: 'room1'
+      roomid: obj.roomId
     }
 
     var message = new Message(mess)

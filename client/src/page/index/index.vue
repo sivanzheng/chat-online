@@ -1,6 +1,6 @@
 <template>
 <div class="gridlist-demo-container">
-  <mu-grid-list class="gridlist">
+  <mu-grid-list class="gridlist" style="margin-bottom:55px">
     <mu-appbar title="兴趣广场">
     </mu-appbar>
     <mu-grid-tile v-for="tile,index in list" :key="'tile' + index" titlePosition="top" actionPosition="left" :rows="tile.featured ? 2 : 1" :cols="tile.featured ? 2 : 1">

@@ -64,10 +64,20 @@
         txt:'',
         msg:'',
         status: 0,
-        socket: ''
+        socket: '',
+        roomID: ''
       }
     },
     mounted() {
+      this.roomID = this.$route.params.id
+
+      var  date = new Date()
+      console.log(date) 
+      var d2 = Date()
+      console.log(d2)
+      console.log(date === d2)
+      console.log(typeof(date))
+      console.log(typeof(d2))
       this.height = document.body.scrollHeight - 220
       this.title = this.getUser.name
       this.$store.dispatch('getHistory')
@@ -96,7 +106,8 @@
                 let obj = {
                     username: this.getUser.name,
                     src: this.getUser.src,
-                    msg: this.txt
+                    msg: this.txt,
+                    roomId: this.roomID
                 }
                 // 传递消息信息
                 console.log('我发送消息啦')
