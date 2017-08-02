@@ -252,24 +252,20 @@ io.on('connection', function (socket) {
     // 从房间名单中移除
 
     if (roomInfo[id]) {
-     
-      Array.prototype.del=function(value){
-          var index = this.length
-          var deleindex = 0
-          for(var i=0; i<index; i++){
-              if(this[i]['username'] === value['username']){
-                  deleindex = i
-              }
+      Array.prototype.del = function(filter){
+        var idx = filter
+        if(typeof filter == 'function'){
+            for(var i=0;i<this.length;i++){
+              if(filter(this[i],i)) idx = i
+            }
           }
-          
-          this.splice(deleindex,1)
-          return this
-      };
-      console.log('roomInfo_________________________________')
+          this.splice(idx,1)
+      }
       console.log(roomInfo[id])
-      roomInfo[id].del(obj)
-      console.log('roomInfo[id]+++++++++++++++++++++++++++')
-      console.log(roomInfo[id])
+      var delobj = obj.username
+      roomInfo[id].del(function(obj){
+        return obj.username == delobj
+      })
 
     }
 
@@ -277,22 +273,4 @@ io.on('connection', function (socket) {
     io.to(id).emit('sys', obj.username + '退出了房间', roomInfo[id])
     console.log(obj.username + '退出了' + id)
   })
-
-/*  socket.on('disconnect', function () {
-    //需要在路由的地方做判断 将obj传递给后台 然后再执行删除操作
-    // 从房间名单中移除
-    var index = roomInfo[roomID].indexOf(user)
-    console.log('index')
-    console.log(index)
-    if (index !== -1) {
-      roomInfo[roomID].splice(index, 1)
-    }
-    console.log(roomInfo[roomID])
-
-    socket.leave(roomID)    // 退出房间
-    io.to(roomID).emit('sys', user + '退出了房间', roomInfo[roomID])
-    console.log(user + '退出了' + roomID)
-    roomID = ''
-  })*/
-
 })

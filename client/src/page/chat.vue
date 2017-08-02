@@ -112,6 +112,9 @@
       this.$store.dispatch('getHistory')
       window.scrollTo(0, this.height)
     },
+    beforeRouteUpdate (to, from, next) {
+      alert('1111111111111')
+    },
 /*    beforeRouteUpdate (to, from, next) {
         console.log('component beforeRouteUpdate');
         this.socket.emit('leave','1111111')
@@ -124,10 +127,7 @@
         next();
     },*/
     methods: {
-        /*closechat() {
-            this.$store.commit('changechattoggle')
-            this.socket.emit('logout', this.getUser.name)
-        },*/
+
         submit() {
             // 判断发送信息是否为空
             if (this.txt != '') {
@@ -155,8 +155,17 @@
             }
         },
         getOut(){
+          let user = JSON.parse(sessionStorage.getItem('user'))
+          let obj = {
+              username: this.getUser.name,
+              src: this.getUser.src
+          }
+          this.socket.emit('leave',obj,this.roomID)
           this.$router.push({path:'/index'})
         }
+    },
+    destroyed(){
+      console.log('我被干掉了')
     },
     computed: {
       ...mapGetters([

@@ -66,6 +66,7 @@ const router =  new Router({
 })
 
 router.beforeEach((to, from, next) => {
+  console.log(to, from)
     if (to.meta.requireAuth) {
       let user = JSON.parse(sessionStorage.getItem('user'))
         if (user) {
@@ -73,7 +74,7 @@ router.beforeEach((to, from, next) => {
               username: user.name,
               src: user.src
             }
-            if(to.name == 'chat'){
+            if(to.name == 'chat' && from.name == null){
               let id = to.params.id
               socket.emit('leave',obj,id)
               next()
