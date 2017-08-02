@@ -14,12 +14,15 @@ var MessageSchema = new mongoose.Schema({
 
 //定义静态方法
 MessageSchema.statics = {
-  fetch: function (cb) {
+/*  fetch: function (cb) {
     return this.find({}).sort('time').exec(cb)
   },
   findById: function (id, cb) {
     return this.findOne({_id: id}).exec(cb)
-  }
+  },
+  findRoomId: function (id, cb) {
+    return this.
+  }*/
 }
 
 module.exports = MessageSchema

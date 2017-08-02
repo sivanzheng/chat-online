@@ -64,7 +64,7 @@ export default{
         },
         go(data){
             if(data){
-                this.$router.push('/chat')
+                this.$router.push('/index')
             }
         }
     },

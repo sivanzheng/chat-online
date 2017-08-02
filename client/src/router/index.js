@@ -6,6 +6,11 @@ import login from '@/page/login'
 import reg from '@/page/reg'
 import robot from '@/page/robot'
 import chat from '@/page/chat'
+import io from 'socket.io-client'
+
+// 连接websocket地址
+const SOCKET_HOST = process.env.NODE_ENV === 'development' ? 'localhost:3001' : 'http://113.209.100.33'
+var socket = io.connect(SOCKET_HOST)
 
 Vue.use(Router)
 
@@ -62,14 +67,30 @@ const router =  new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.meta.requireAuth) {
-        if (sessionStorage.getItem('user')) {
-            next();
+      let user = JSON.parse(sessionStorage.getItem('user'))
+        if (user) {
+            let obj = {
+              username: user.name,
+              src: user.src
+            }
+            if(to.name == 'chat'){
+              let id = to.params.id
+              socket.emit('leave',obj,id)
+              next()
+            }else if(from.name == 'chat'){
+              let id = from.params.id
+              socket.emit('leave',obj,id)
+              next()
+            }else{
+              next()
+            }
         } else {
             next({
                 path: '/login'/*,
                 query: {redirect: to.fullPath}  // 将跳转的路由path作为参数，登录成功后跳转到该路由*/
             })
         }
+      
     }
     else {
         next();

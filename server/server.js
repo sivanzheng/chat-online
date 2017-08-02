@@ -30,7 +30,7 @@ global.db = mongoose.connect("mongodb://localhost:27017/chatRoom",{useMongoClien
 
 //服务器数据json化
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.urlencoded({extended: false}))
 app.use(session({
   name: 'test',
   secret: 'SHIVER',
@@ -72,6 +72,7 @@ app.post('/user/login', function (req, res) {
     var _user = req.body
     var name = _user.name
     var password = _user.password
+    console.log(_user)
     User.findOne({name: name}, function (err, user) {
       console.log(user)
       if (err) {
@@ -121,8 +122,7 @@ app.post('/user/login', function (req, res) {
 //登陆控制
 app.use(function (req, res, next) {
     var o_url = req.originalUrl
-    console.log('########以下是session#######')
-    console.log(req.session)
+    /* */
     if (o_url != "/login" && req.session.user == undefined) {
       res.json({
         res_code: 0,
@@ -164,7 +164,6 @@ app.post('/user/logout', function (req, res) {
 
 // 机器人消息
 app.get('/robotapi', function(req, res) {
-  console.log(req.session)
   var response = res
   var info = req.query.info
   var userid = req.query.id
@@ -185,10 +184,10 @@ app.get('/robotapi', function(req, res) {
 
     })
 })
-
 // 获取历史信息
-app.get('/message',function (req, res) {
-  Message.find({}, function (err, message) {
+app.get('/message/:id',function (req, res) {
+  var id = req.params.id
+  Message.find({roomid:id}, function (err, message) {
     if(err) {
       console.log(err)
     } else{
@@ -205,8 +204,9 @@ app.get('/message',function (req, res) {
 var io = require('socket.io')(server)
 var Message = require('./models/message.js')
 var user = {}
+var roomInfo = {}
 io.on('connection', function (socket) {
-
+  var roomID = ''
   socket.on('message', function (obj) {
     io.emit('message', obj)
     var mess = {
@@ -228,29 +228,71 @@ io.on('connection', function (socket) {
 
   })
 
-  socket.on('login', function (obj) {
-    console.log('login——>obj')
-    console.log(obj)
-  socket.name = obj.name
-  users[obj.name] = obj
-    //用于监听用户进行聊天室
-    io.emit('login', users)
+  socket.on('join', function (obj) {
+    user = {
+      username: obj.username,
+      src: obj.src
+    }
+    roomID = obj.roomId
+    // 将用户昵称加入房间名单中
+    if (!roomInfo[roomID]) {
+      roomInfo[roomID] = []
+    }
+    roomInfo[roomID].push(user)
+    console.log(roomInfo[roomID])
+    socket.join(roomID)    // 加入房间
+    // 通知房间内人员
+    io.to(roomID).emit('sys', user + '加入了房间', roomInfo[roomID])
+    console.log('用户：'+user + '加入了房间：' + roomID)
   })
 
-  /*socket.on('logout',function (name) {
-    console.log('logout——>name')
-    console.log(name)
-    delete users[name]
-    //用户监听用退出聊天室
-    io.emit('logout', users)
+  socket.on('leave', function (obj,id) {
+    console.log('id===='+id)
+    //需要在路由的地方做判断 将obj传递给后台 然后再执行删除操作
+    // 从房间名单中移除
+
+    if (roomInfo[id]) {
+     
+      Array.prototype.del=function(value){
+          var index = this.length
+          var deleindex = 0
+          for(var i=0; i<index; i++){
+              if(this[i]['username'] === value['username']){
+                  deleindex = i
+              }
+          }
+          
+          this.splice(deleindex,1)
+          return this
+      };
+      console.log('roomInfo_________________________________')
+      console.log(roomInfo[id])
+      roomInfo[id].del(obj)
+      console.log('roomInfo[id]+++++++++++++++++++++++++++')
+      console.log(roomInfo[id])
+
+    }
+
+    socket.leave(id)    // 退出房间
+    io.to(id).emit('sys', obj.username + '退出了房间', roomInfo[id])
+    console.log(obj.username + '退出了' + id)
   })
 
-  socket.on('disconnect', function () {
-    console.log('disconnect——>socket')
-    console.log(socket)
-    delete users[socket.name]
-    //用户监听用退出聊天室
-    io.emit('logout', users)
+/*  socket.on('disconnect', function () {
+    //需要在路由的地方做判断 将obj传递给后台 然后再执行删除操作
+    // 从房间名单中移除
+    var index = roomInfo[roomID].indexOf(user)
+    console.log('index')
+    console.log(index)
+    if (index !== -1) {
+      roomInfo[roomID].splice(index, 1)
+    }
+    console.log(roomInfo[roomID])
+
+    socket.leave(roomID)    // 退出房间
+    io.to(roomID).emit('sys', user + '退出了房间', roomInfo[roomID])
+    console.log(user + '退出了' + roomID)
+    roomID = ''
   })*/
 
 })

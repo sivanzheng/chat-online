@@ -4,20 +4,27 @@
 
       <div class="title">
         <mu-appbar title="Title">
-            <mu-icon-button icon="chevron_left" slot="left"/>
+            <mu-icon-button icon="chevron_left" slot="left" @click="getOut"/>
             <div class="center">
                 聊天
             </div>
-            <mu-icon-button icon="expand_more" slot="right"/>
+            <mu-icon-button icon="expand_more" slot="right" @click="infoShow = !infoShow"/>
         </mu-appbar>
       </div>
 
       <div class="chat">
         <div style="height:70px"></div>
-        <div>在线人员</div>
-        <div class="online">
-            <img src="" alt="">
-        </div>
+        <transition name="infoBox">
+          <div class="info" v-show="infoShow">
+            <div class="infoInner">
+              <div class="onlineNum">在线人数:{{roomInfo.length}}</div>
+              <mu-chip class="demo-chip" v-for="item in roomInfo">
+                <mu-avatar :size="32" :src="item.src"/>{{item.username}}
+              </mu-chip> 
+            </div>
+          </div>
+        </transition>
+        
         <div  v-for="obj in getHistoryInfos">
 
           <get-msg v-if="obj.username != getUser.name" 
@@ -63,38 +70,59 @@
         title: '',
         txt:'',
         msg:'',
+        infoShow: false,
         status: 0,
         socket: '',
-        roomID: ''
+        roomID: '',
+        users:[],
+        roomInfo:[]
       }
     },
-    mounted() {
-      this.roomID = this.$route.params.id
+    created() {
+      // 连接websocket地址
+      const SOCKET_HOST = process.env.NODE_ENV === 'development' ? 'localhost:3001' : 'http://113.209.100.33'
+      this.socket = io.connect(SOCKET_HOST)
 
-      var  date = new Date()
-      console.log(date) 
-      var d2 = Date()
-      console.log(d2)
-      console.log(date === d2)
-      console.log(typeof(date))
-      console.log(typeof(d2))
+      this.socket.on('message', (obj) => {
+          this.$store.dispatch('getHistory')
+      })
+
+      this.roomID = this.$route.params.id
+    },
+    mounted() {
       this.height = document.body.scrollHeight - 220
       this.title = this.getUser.name
+
+      let obj = {
+          username: this.getUser.name,
+          src: this.getUser.src,
+          roomId: this.roomID
+        }
+
+      this.socket.emit('join', obj);
+
+      this.socket.on('sys', (sysMsg, users) => {
+        console.log(sysMsg)
+        this.roomInfo = users
+        this.users = users.src
+        console.log(this.roomInfo)
+        console.log(users.src)
+      });
+
       this.$store.dispatch('getHistory')
       window.scrollTo(0, this.height)
     },
-    created() {
-        // 连接websocket地址
-        const SOCKET_HOST = process.env.NODE_ENV === 'development' ? 'localhost:3001' : 'http://113.209.100.33'
-        this.socket = io.connect(SOCKET_HOST)
-        
-         this.socket.on('message', (obj) => {
-          console.log(obj)
-            this.$store.dispatch('getHistory')
-            /*that.$store.commit('addroomdetailinfos', obj)*/
-            
-        })
+/*    beforeRouteUpdate (to, from, next) {
+        console.log('component beforeRouteUpdate');
+        this.socket.emit('leave','1111111')
+        next();
     },
+    beforeRouteLeave(to,from,next){
+        console.log(to,from)
+        console.log('component beforeRouteLeave');
+        this.socket.emit('leave','2222222')
+        next();
+    },*/
     methods: {
         /*closechat() {
             this.$store.commit('changechattoggle')
@@ -125,6 +153,9 @@
                 this.msg = '写点啥再发送呗~'
                 this.$store.dispatch('showDialog')
             }
+        },
+        getOut(){
+          this.$router.push({path:'/index'})
         }
     },
     computed: {
@@ -133,6 +164,13 @@
           'getHistoryInfos'
       ])
     },
+/*    watch: {
+      roomInfo:function(v,ov)
+      {
+        console.log(v,ov)
+      }
+
+    },*/
     components: {
         sendMsg,
         getMsg,
@@ -142,12 +180,40 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+
+    @keyframes bounce-in {
+      0% {
+        opacity: 0;
+      }
+      20% {
+        opacity: 0.2;
+      }
+      40% {
+        opacity: 0.4;
+      }
+      60% {
+        opacity: 0.6;
+      }
+      80% {
+        opacity: 0.8;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    
+    &.infoBox-enter-active, &.infoBox-leave-active 
+      animation: bounce-in 0.2s linear;
+    &.infoBox-enter, &.infoBox-leave-to
+      animation: bounce-in 0.2s linear reverse;
+      
     &.fade-enter-active, &.fade-leave-active
         transition: all 0.2s linear
         transform translate3d(0, 0, 0)
     &.fade-enter, &.fade-leave-active
         opacity: 0
         transform translate3d(100%, 0, 0)
+        
     .container
         position: absolute
         left:0
@@ -176,13 +242,26 @@
                 line-height: 56px
                 text-align:center
         .chat
-            .online
-                display:inline-block
-                margin:5px
-                img
-                    width: 40px
-                    height: 40px
-                    border-radius:100%
+          .info
+            background: rgba(0, 0, 0, 0.4)
+            position: fixed
+            top: 56px
+            border-radius: 0 0 10px 10px
+            width: 100%
+            z-index: 99999
+            .infoInner
+              text-align:center
+              margin 0 auto
+              .onlineNum
+                color: #fff
+                font-size: 15px
+            .demo-chip-container
+              display: flex
+              flex-wrap: wrap
+            .demo-chip
+              margin: 4px
+              background-color: rgba(255, 255, 255, 0.5);
+              color: rgba(71, 74, 79, 0.87);
         .bottom
             position:fixed
             height:50px
