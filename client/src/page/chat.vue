@@ -74,7 +74,6 @@
         status: 0,
         socket: '',
         roomID: '',
-        users:[],
         roomInfo:[]
       }
     },
@@ -102,20 +101,16 @@
       this.socket.emit('join', obj);
 
       this.socket.on('sys', (sysMsg, users) => {
-        console.log(sysMsg)
         this.roomInfo = users
-        this.users = users.src
-        console.log(this.roomInfo)
-        console.log(users.src)
       });
 
       this.$store.dispatch('getHistory')
       window.scrollTo(0, this.height)
     },
-    beforeRouteUpdate (to, from, next) {
+    /* beforeRouteUpdate (to, from, next) {
       alert('1111111111111')
     },
-/*    beforeRouteUpdate (to, from, next) {
+   beforeRouteUpdate (to, from, next) {
         console.log('component beforeRouteUpdate');
         this.socket.emit('leave','1111111')
         next();
@@ -147,8 +142,6 @@
                   },400)
                 })
                 
-               /* window.scrollTo(0, document.body.scrollHeight + 200)*/
-                
             } else {
                 this.msg = '写点啥再发送呗~'
                 this.$store.dispatch('showDialog')
@@ -164,22 +157,12 @@
           this.$router.push({path:'/index'})
         }
     },
-    destroyed(){
-      console.log('我被干掉了')
-    },
     computed: {
       ...mapGetters([
           'getUser',
           'getHistoryInfos'
       ])
     },
-/*    watch: {
-      roomInfo:function(v,ov)
-      {
-        console.log(v,ov)
-      }
-
-    },*/
     components: {
         sendMsg,
         getMsg,

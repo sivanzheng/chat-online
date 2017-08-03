@@ -1,18 +1,19 @@
 var express = require('express')
 var port = process.env.PORT || 80
+var env = process.env.NODE_ENV || 'production';
 var app = express()
 var router = express.Router()
 
 app.use(router)
 // 只用于开发环境
 
-if ('development' == app.get('env')) {
+if (env == 'development') {
   console.log( app.get('env'))
   port = 3001
 }
 
 // 只用于生产环境
-if ('production' == app.get('env')) {
+if (env == 'production') {
   console.log( app.get('env'))
   app.use(express.static('./dist'))
 }
@@ -122,7 +123,6 @@ app.post('/user/login', function (req, res) {
 //登陆控制
 app.use(function (req, res, next) {
     var o_url = req.originalUrl
-    /* */
     if (o_url != "/login" && req.session.user == undefined) {
       res.json({
         res_code: 0,
@@ -134,6 +134,7 @@ app.use(function (req, res, next) {
 })
 
 app.get('/test', function (req, res) {
+  //该接口为测试使用
   var Message = require('./models/message.js')
   var message = new Message
   console.log('以下是Message对象')
@@ -184,6 +185,7 @@ app.get('/robotapi', function(req, res) {
 
     })
 })
+
 // 获取历史信息
 app.get('/message/:id',function (req, res) {
   var id = req.params.id
@@ -229,26 +231,53 @@ io.on('connection', function (socket) {
   })
 
   socket.on('join', function (obj) {
+
     user = {
+      //定义user对象
       username: obj.username,
       src: obj.src
     }
+
     roomID = obj.roomId
     // 将用户昵称加入房间名单中
+
     if (!roomInfo[roomID]) {
-      roomInfo[roomID] = []
+      //如果房间不存在
+      roomInfo[roomID] = []    
     }
-    roomInfo[roomID].push(user)
-    console.log(roomInfo[roomID])
-    socket.join(roomID)    // 加入房间
-    // 通知房间内人员
-    io.to(roomID).emit('sys', user + '加入了房间', roomInfo[roomID])
-    console.log('用户：'+user + '加入了房间：' + roomID)
+
+    var flag = false  //flag表示用户是否进入过该房间
+    var findobj = obj.username
+
+    Array.prototype.find = function(fct){
+      //定义find方法 查找房间的数组内是否包含用户对象
+      if(typeof fct == 'function'){
+          for(var i=0;i<this.length;i++){
+            if(fct(this[i])){
+              return  flag = true
+            } 
+          }
+        }
+    }
+
+    roomInfo[roomID].find(function(obj){
+      return obj.username == findobj
+    })
+
+
+    if (!flag) {
+      roomInfo[roomID].push(user)
+      console.log(roomInfo[roomID])
+      socket.join(roomID)    // 加入房间
+      io.to(roomID).emit('sys', user + '加入了房间', roomInfo[roomID])  // 通知房间内人员
+      console.log('用户：'+user + '加入了房间：' + roomID)
+    }
+
   })
 
   socket.on('leave', function (obj,id) {
-    console.log('id===='+id)
-    //需要在路由的地方做判断 将obj传递给后台 然后再执行删除操作
+
+    //前端在路由改变时做判断 将用户对象传递给后台 然后再执行删除操作
     // 从房间名单中移除
 
     if (roomInfo[id]) {
@@ -273,4 +302,22 @@ io.on('connection', function (socket) {
     io.to(id).emit('sys', obj.username + '退出了房间', roomInfo[id])
     console.log(obj.username + '退出了' + id)
   })
+
+
+/*    socket.on('disconnect', function () {
+    //需要在路由的地方做判断 将obj传递给后台 然后再执行删除操作
+    // 从房间名单中移除
+    var index = roomInfo[roomID].indexOf(user)
+    console.log('index')
+    console.log(index)
+    if (index !== -1) {
+      roomInfo[roomID].splice(index, 1)
+    }
+    console.log(roomInfo[roomID])
+
+    socket.leave(roomID)    // 退出房间
+    io.to(roomID).emit('sys', user + '退出了房间', roomInfo[roomID])
+    console.log(user + '退出了' + roomID)
+    roomID = ''
+  })*/
 })
