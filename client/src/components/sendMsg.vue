@@ -23,13 +23,13 @@
   padding: 16px 40px 16px 20px
   margin: 10px 10px 20px 10px
   border-radius: 10px
-  background-color: rgba(25, 147, 147, 0.2)
+  background-color: #9eea6a
   animation: show-chat-odd 0.25s 1 ease-in
   -moz-animation: show-chat-odd 0.25s 1 ease-in
   -webkit-animation: show-chat-odd 0.25s 1 ease-in
   float: right
   margin-right: 80px
-  color: #0AD5C1
+  color: #232323
   span
       word-break:break-all
   img
@@ -45,7 +45,7 @@
       content: ''
       width: 0
       height: 0
-      border-top: 15px solid rgba(25, 147, 147, 0.2)
+      border-top: 15px solid #9eea6a
       border-right: 15px solid transparent
       right: -15px
 @keyframes show-chat-odd {

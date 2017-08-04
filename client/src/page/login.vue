@@ -44,8 +44,8 @@ export default{
                 this.$http.post(this.HOST+'/user/login', data)
                     .then( (res) => {
                         let data = res.data
-                        if(data.res_code === 0) {
-                            this.msg = 'data.res_msg'
+                        if(data.res_code === 0||data.res_code === 2) {
+                            this.msg = data.res_msg
                             this.$store.dispatch('showDialog')
                         } else if(data.res_code === 1){
                             this.msg = data.res_msg

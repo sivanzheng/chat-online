@@ -1,6 +1,6 @@
 var express = require('express')
 var port = process.env.PORT || 80
-var env = process.env.NODE_ENV || 'production';
+var env = process.env.NODE_ENV || 'development'
 var app = express()
 var router = express.Router()
 
@@ -133,19 +133,6 @@ app.use(function (req, res, next) {
     }
 })
 
-app.get('/test', function (req, res) {
-  //该接口为测试使用
-  var Message = require('./models/message.js')
-  var message = new Message
-  console.log('以下是Message对象')
-  console.log(typeof(Message))
-  console.log('以下是message对象')
-  console.log(typeof(message))
-  findById
-  res.json({
-    res_msg: Message
-  })
-})
 
 //退出
 app.post('/user/logout', function (req, res) {
@@ -303,21 +290,35 @@ io.on('connection', function (socket) {
     console.log(obj.username + '退出了' + id)
   })
 
+})
 
-/*    socket.on('disconnect', function () {
-    //需要在路由的地方做判断 将obj传递给后台 然后再执行删除操作
-    // 从房间名单中移除
-    var index = roomInfo[roomID].indexOf(user)
-    console.log('index')
-    console.log(index)
-    if (index !== -1) {
-      roomInfo[roomID].splice(index, 1)
+/*app.get('/test', function (req, res) {
+  //该接口为测试使用
+  var Message = require('./models/message.js')
+  var message = new Message
+  console.log('以下是Message对象')
+  console.log(typeof(Message))
+  console.log('以下是message对象')
+  console.log(typeof(message))
+  findById
+  res.json({
+    info: roomInfo
+  })
+})*/
+
+app.post('/onlineNum', function (req, res) {
+  //返回首页各个房间的在线人数
+  var rooms = req.body.rooms
+  var onlineNum = []
+  for (let i = 0; i <= rooms; i++) {
+    if (roomInfo[i]) {
+      onlineNum[i] = roomInfo[i].length
+    }else{
+      onlineNum[i] = 0
     }
-    console.log(roomInfo[roomID])
-
-    socket.leave(roomID)    // 退出房间
-    io.to(roomID).emit('sys', user + '退出了房间', roomInfo[roomID])
-    console.log(user + '退出了' + roomID)
-    roomID = ''
-  })*/
+    
+  }
+  res.json({
+    onlineNum
+  })
 })

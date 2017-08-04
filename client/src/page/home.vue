@@ -77,7 +77,7 @@
             test(){
                 this.$http.get(this.HOST+'/test', {})
                     .then( (res) => {
-                        console.log(res)
+                        console.log(res.data.info[1].length)
                     }).catch(function (err) {
                       console.log(err)
                     })

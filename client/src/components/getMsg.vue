@@ -23,13 +23,13 @@ export default{
     padding: 16px 40px 16px 20px
     margin: 10px 10px 20px 10px
     border-radius: 10px
-    background-color: rgba(25, 147, 147, 0.2)
+    background-color: #f5f5f5
     animation: show-chat-even 0.25s 1 ease-in
     -moz-animation: show-chat-even 0.25s 1 ease-in
     -webkit-animation: show-chat-even 0.25s 1 ease-in
     float: left
     margin-left: 80px
-    color: #0EC879
+    color: #232323
     span
         word-break:break-all
     img
@@ -45,7 +45,7 @@ export default{
         content: ''
         width: 0
         height: 0
-        border-top: 15px solid rgba(25, 147, 147, 0.2)
+        border-top: 15px solid #f5f5f5
         border-left: 15px solid transparent
         left: -15px
 @keyframes show-chat-odd {

@@ -84,6 +84,11 @@
 
       this.socket.on('message', (obj) => {
           this.$store.dispatch('getHistory')
+          this.$nextTick(()=>{
+            setTimeout(function(){
+              window.scrollTo(0, (document.getElementById('container').scrollHeight + 200))
+            },400)
+          })
       })
 
       this.roomID = this.$route.params.id
@@ -107,20 +112,6 @@
       this.$store.dispatch('getHistory')
       window.scrollTo(0, this.height)
     },
-    /* beforeRouteUpdate (to, from, next) {
-      alert('1111111111111')
-    },
-   beforeRouteUpdate (to, from, next) {
-        console.log('component beforeRouteUpdate');
-        this.socket.emit('leave','1111111')
-        next();
-    },
-    beforeRouteLeave(to,from,next){
-        console.log(to,from)
-        console.log('component beforeRouteLeave');
-        this.socket.emit('leave','2222222')
-        next();
-    },*/
     methods: {
 
         submit() {

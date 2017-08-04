@@ -29,4 +29,4 @@ export const ajax = function(url, params, type, callback) {
 export const getUrl = function(url){
   var index = url.lastIndexOf("\/")
   return url.substring(index + 1, url.length)
-} 
+}

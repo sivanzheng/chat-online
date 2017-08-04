@@ -66,7 +66,6 @@ const router =  new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log(to, from)
     if (to.meta.requireAuth) {
       let user = JSON.parse(sessionStorage.getItem('user'))
         if (user) {

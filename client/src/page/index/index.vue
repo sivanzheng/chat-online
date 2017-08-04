@@ -17,27 +17,28 @@
 export default {
   data () {
     return {
+      numList:[],
       list: [{
         id:1,
         image: 'static/img/index/breakfast.jpg',
         title: 'Breakfast',
-        num_of_people: 10,
+        num_of_people: 0,
         featured: true
       }, {
         id:2,
         image: 'static/img/index/burger.jpg',
         title: 'Burger',
-        num_of_people: 2
+        num_of_people: 0
       }, {
         id:3,
         image: 'static/img/index/camera.jpg',
         title: 'Camera',
-        num_of_people: 3
+        num_of_people: 0
       }, {
         id:4,
         image: 'static/img/index/hats.jpg',
         title: 'Hats',
-        num_of_people: 11
+        num_of_people: 0
       }, {
         id:5,
         image: 'static/img/index/honey.jpg',
@@ -59,7 +60,26 @@ export default {
   methods:{
     goToChat(tile){
       this.$router.push({ path: '/chat/'+tile.id})
+    },
+      getOnlineNum(){
+
+      this.$http.post(this.HOST+'/onlineNum', {rooms: this.list.length})
+          .then( (res) => {
+              let data = res.data
+              if (!!data) {
+                this.numList = data.onlineNum
+                for (let i = 0; i < this.list.length; i++) {
+                  this.list[i].num_of_people = this.numList[i+1]
+                }
+              }
+          })
+          .catch(function (err) {
+            console.log(err)
+          })
     }
+  },
+  mounted(){
+    this.getOnlineNum()
   }
 }
 </script>
